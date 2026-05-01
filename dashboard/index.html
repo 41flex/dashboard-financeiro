@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinanceAI — Dashboard</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-mark">Finance<span>AI</span></div>
+                <div class="logo-sub">Notificador de A&ccedil;&otilde;es</div>
+            </div>
+            <nav id="main-nav">
+                <a class="active" data-page="overview"><span class="icon">▦</span> Visão geral</a>
+                <a data-page="market"><span class="icon">📈</span> Mercado</a>
+                <a data-page="transactions"><span class="icon">↕</span> Transações</a>
+                <a data-page="goals"><span class="icon">◎</span> Metas</a>
+                <a data-page="investments"><span class="icon">◈</span> Investimentos</a>
+                <a data-page="reports"><span class="icon">⊞</span> Relatórios</a>
+                <a data-page="settings"><span class="icon">⚙</span> Configurações</a>
+            </nav>
+            <div class="user-profile">
+                <div class="user-avatar">AD</div>
+                <div class="user-info">
+                    <div class="user-name">Yago Andrade</div>
+                    <div class="user-plan">Plano Pro</div>
+                </div>
+            </div>
+            <div class="sidebar-footer">v1.0 · FinanceAI</div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main">
+
+            <div class="ticker-wrap animate">
+                <div class="ticker" id="stock-ticker">
+                    <div class="ticker-item"><span class="ticker-symbol">PETR4</span> <span class="ticker-price">R$ 36,40</span> <span class="ticker-change up">+1,2%</span></div>
+                    <div class="ticker-item"><span class="ticker-symbol">VALE3</span> <span class="ticker-price">R$ 62,80</span> <span class="ticker-change down">-0,5%</span></div>
+                    <div class="ticker-item"><span class="ticker-symbol">ITUB4</span> <span class="ticker-price">R$ 32,15</span> <span class="ticker-change up">+0,8%</span></div>
+                    <div class="ticker-item"><span class="ticker-symbol">BBDC4</span> <span class="ticker-price">R$ 14,30</span> <span class="ticker-change down">-2,1%</span></div>
+                    <div class="ticker-item"><span class="ticker-symbol">ABEV3</span> <span class="ticker-price">R$ 12,90</span> <span class="ticker-change up">+0,3%</span></div>
+                    <div class="ticker-item"><span class="ticker-symbol">RENT3</span> <span class="ticker-price">R$ 58,50</span> <span class="ticker-change up">+3,5%</span></div>
+                    <!-- Duplicate for infinite scroll -->
+                    <div class="ticker-item"><span class="ticker-symbol">PETR4</span> <span class="ticker-price">R$ 36,40</span> <span class="ticker-change up">+1,2%</span></div>
+                    <div class="ticker-item"><span class="ticker-symbol">VALE3</span> <span class="ticker-price">R$ 62,80</span> <span class="ticker-change down">-0,5%</span></div>
+                </div>
+            </div>
+
+            <!-- PAGE VIEWS -->
+            <div id="view-overview" class="page-view active">
+                <div class="page-header animate">
+                    <div>
+                        <h1 class="page-title">Olá, <em>bem-vindo</em> de volta.</h1>
+                        <div class="page-date" id="currentDate"></div>
+                    </div>
+                    <div class="header-actions">
+                        <button class="add-btn" id="new-tx-btn">
+                            <span class="icon">+</span> Nova transação
+                        </button>
+                        <div class="month-selector" id="month-selector">
+                            <button class="month-btn" data-month="Jan">Jan</button>
+                            <button class="month-btn" data-month="Fev">Fev</button>
+                            <button class="month-btn active" data-month="Mar">Mar</button>
+                            <button class="month-btn" data-month="Abr">Abr</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI CARDS -->
+                <div class="cards-row animate" style="animation-delay:0.1s">
+                    <div class="card">
+                        <div class="card-label">Saldo total</div>
+                        <div class="card-value positive" id="kpi-balance">R$ 0</div>
+                        <div class="card-change"><span class="badge up">+0%</span> vs mês anterior</div>
+                        <div class="card-accent-line green"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-label" id="label-income">Receitas</div>
+                        <div class="card-value" id="kpi-income">R$ 0</div>
+                        <div class="card-change"><span class="badge up">+0%</span> vs anterior</div>
+                        <div class="card-accent-line purple"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-label" id="label-expense">Despesas</div>
+                        <div class="card-value negative" id="kpi-expense">R$ 0</div>
+                        <div class="card-change"><span class="badge down">+0%</span> vs anterior</div>
+                        <div class="card-accent-line red"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-label">Economia do mês</div>
+                        <div class="card-value" id="kpi-savings">R$ 0</div>
+                        <div class="card-change"><span class="badge up" id="kpi-savings-pct">0%</span> da receita</div>
+                        <div class="card-accent-line neutral"></div>
+                    </div>
+                </div>
+
+                <!-- CHART + CATEGORIES -->
+                <div class="grid-3-1 animate" style="animation-delay:0.2s">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <span class="chart-title">Fluxo de caixa — 2025</span>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <div class="legend-dot" style="background:var(--accent)"></div> Receitas
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-dot" style="background:var(--red)"></div> Despesas
+                                </div>
+                            </div>
+                        </div>
+                        <svg class="bar-chart" viewBox="0 0 560 160" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="var(--accent)" />
+                                    <stop offset="100%" stop-color="rgba(200, 240, 77, 0.2)" />
+                                </linearGradient>
+                                <linearGradient id="barGradRed" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="var(--red)" />
+                                    <stop offset="100%" stop-color="rgba(255, 92, 92, 0.2)" />
+                                </linearGradient>
+                            </defs>
+                            <!-- Grid lines -->
+                            <line x1="0" y1="40" x2="560" y2="40" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+                            <line x1="0" y1="80" x2="560" y2="80" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+                            <line x1="0" y1="120" x2="560" y2="120" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+                            
+                            <!-- SVG BARS (IDs added for dynamic updates) -->
+                            <rect id="bar-inc-0" x="10" y="140" width="25" height="0" rx="4" fill="url(#barGrad)" opacity="0.85" />
+                            <rect id="bar-inc-1" x="90" y="140" width="25" height="0" rx="4" fill="url(#barGrad)" opacity="0.85" />
+                            <rect id="bar-inc-2" x="170" y="140" width="25" height="0" rx="4" fill="url(#barGrad)" opacity="0.85" />
+                            <rect id="bar-inc-3" x="250" y="140" width="25" height="0" rx="4" fill="url(#barGrad)" opacity="0.85" />
+                            <rect id="bar-inc-4" x="330" y="140" width="25" height="0" rx="4" fill="url(#barGrad)" opacity="0.4" />
+                            <rect id="bar-inc-5" x="410" y="140" width="25" height="0" rx="4" fill="url(#barGrad)" opacity="0.4" />
+                            <rect id="bar-inc-6" x="490" y="140" width="25" height="0" rx="4" fill="url(#barGrad)" opacity="0.4" />
+
+                            <rect id="bar-exp-0" x="40" y="140" width="25" height="0" rx="4" fill="url(#barGradRed)" opacity="0.7" />
+                            <rect id="bar-exp-1" x="120" y="140" width="25" height="0" rx="4" fill="url(#barGradRed)" opacity="0.7" />
+                            <rect id="bar-exp-2" x="200" y="140" width="25" height="0" rx="4" fill="url(#barGradRed)" opacity="0.7" />
+                            <rect id="bar-exp-3" x="280" y="140" width="25" height="0" rx="4" fill="url(#barGradRed)" opacity="0.7" />
+                            <rect id="bar-exp-4" x="360" y="140" width="25" height="0" rx="4" fill="url(#barGradRed)" opacity="0.3" />
+                            <rect id="bar-exp-5" x="440" y="140" width="25" height="0" rx="4" fill="url(#barGradRed)" opacity="0.3" />
+                            <rect id="bar-exp-6" x="520" y="140" width="25" height="0" rx="4" fill="url(#barGradRed)" opacity="0.3" />
+
+                            <!-- Month labels -->
+                            <text x="25" y="155" fill="#5a5a72" font-size="10" text-anchor="middle" font-family="DM Mono">Jan</text>
+                            <text x="105" y="155" fill="#5a5a72" font-size="10" text-anchor="middle" font-family="DM Mono">Fev</text>
+                            <text x="185" y="155" fill="#5a5a72" font-size="10" text-anchor="middle" font-family="DM Mono">Mar</text>
+                            <text x="265" y="155" fill="#5a5a72" font-size="10" text-anchor="middle" font-family="DM Mono">Abr</text>
+                            <text x="345" y="155" fill="#5a5a72" font-size="10" text-anchor="middle" font-family="DM Mono">Mai</text>
+                            <text x="425" y="155" fill="#5a5a72" font-size="10" text-anchor="middle" font-family="DM Mono">Jun</text>
+                            <text x="505" y="155" fill="#5a5a72" font-size="10" text-anchor="middle" font-family="DM Mono">Jul</text>
+                        </svg>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <span class="chart-title">Por categoria</span>
+                        </div>
+                        <div class="category-list" id="category-list-container">
+                            <!-- JS WILL FILL THIS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI + TRANSACTIONS -->
+                <div class="grid-2 animate" style="animation-delay:0.3s">
+
+                    <!-- AI PANEL -->
+                    <div class="ai-card">
+                        <div class="ai-header">
+                            <span class="ai-badge">IA</span>
+                            <span class="ai-title">Assistente Financeiro</span>
+                        </div>
+                        <div class="ai-chips">
+                            <div class="chip" data-q="Onde estou gastando mais?">Onde estou gastando mais?</div>
+                            <div class="chip" data-q="Como economizar mais?">Como economizar mais?</div>
+                            <div class="chip" data-q="Analise meu mês">Analise meu mês</div>
+                        </div>
+                        <div class="ai-prompt">
+                            <input type="text" id="aiInput" placeholder="Pergunte sobre suas finanças..." />
+                            <button class="ai-send" id="aiBtn">Enviar</button>
+                        </div>
+                        <div class="ai-response" id="aiResponse">
+                            💡 Olá! Clique em uma das sugestões acima ou faça uma pergunta sobre suas finanças. Analisarei
+                            seus dados do mês.
+                        </div>
+                    </div>
+
+                    <!-- TRANSACTIONS -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <span class="chart-title">Últimas transações</span>
+                            <span style="font-size:12px;color:var(--muted);cursor:pointer" id="see-all-tx">Ver todas →</span>
+                        </div>
+                        <div class="tx-list" id="overview-tx-list">
+                            <!-- JS WILL FILL THIS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GOALS -->
+                <div class="animate" style="animation-delay:0.4s">
+                    <div class="section-label">Metas financeiras</div>
+                    <div class="chart-card">
+                        <div id="overview-goals-container" class="goal-list">
+                            <!-- JS WILL FILL THIS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: MARKET -->
+            <div id="view-market" class="page-view" style="display:none">
+                <!-- JS FILL VIA updateMarketView -->
+            </div>
+
+            <!-- VIEW: TRANSACTIONS -->
+            <div id="view-transactions" class="page-view" style="display:none">
+                <div class="page-header">
+                    <h1 class="page-title">Histórico de <em>Transações</em></h1>
+                </div>
+                <div class="chart-card animate">
+                    <div id="full-tx-list" class="tx-list">
+                        <!-- JS WILL FILL THIS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: GOALS -->
+            <div id="view-goals" class="page-view" style="display:none">
+                <div class="page-header">
+                    <h1 class="page-title">Suas <em>Metas</em></h1>
+                    <button class="add-btn" id="new-goal-btn">
+                        <span class="icon">+</span> Nova meta
+                    </button>
+                </div>
+                <div class="grid-2 animate" id="goals-container">
+                    <!-- JS WILL FILL GOALS HERE -->
+                </div>
+            </div>
+
+            <!-- VIEW: INVESTMENTS -->
+            <div id="view-investments" class="page-view" style="display:none">
+                <div class="page-header">
+                    <h1 class="page-title">Meus <em>Investimentos</em></h1>
+                </div>
+                <div class="chart-card animate">
+                    <div style="display:flex; gap:10px; margin-bottom:20px">
+                        <input type="text" id="stockSearch" placeholder="Digite o ticker (Ex: PETR4.SA)" style="flex:1">
+                        <button class="btn-primary" id="stock-search-btn">Buscar</button>
+                    </div>
+                    <div id="stockResult">
+                        <div style="text-align:center; padding:40px; color:var(--muted)">
+                            Digite um ticker para ver a cotação real via Alpha Vantage.
+                        </div>
+                    </div>
+                    <div id="stockChartContainer" style="margin-top:20px; height:200px; width:100%; display:none">
+                        <canvas id="stockChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: SETTINGS -->
+            <div id="view-settings" class="page-view" style="display:none">
+                <div class="page-header">
+                    <h1 class="page-title">Configurações</h1>
+                </div>
+                <div class="chart-card animate" style="padding: 40px;">
+                    <div class="form-group">
+                        <label>Nome do Perfil</label>
+                        <input type="text" value="Yago Andrade">
+                    </div>
+                    <div class="form-group">
+                        <label>Moeda Principal</label>
+                        <select>
+                            <option>Real (BRL)</option>
+                            <option>Dólar (USD)</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary">Salvar Ajustes</button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- NOTIFICATION TOAST -->
+    <div id="notifToast" class="notification-toast">
+        <div class="notif-icon">🔔</div>
+        <div class="notif-content">
+            <div id="notifTitle" class="notif-title">Alerta</div>
+            <div id="notifDesc" class="notif-desc"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: TRANSACTIONS -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">Nova Transação</h2>
+                <button class="modal-close" data-close="modalOverlay">×</button>
+            </div>
+            <form id="txForm">
+                <input type="hidden" id="txId">
+                <div class="form-group">
+                    <label>Título</label>
+                    <input type="text" id="txName" placeholder="Ex: Supermercado" required>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Valor (R$)</label>
+                        <input type="number" step="0.01" id="txAmount" placeholder="0,00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Data</label>
+                        <input type="date" id="txDate" required>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <div class="custom-select-wrapper" id="category-select-wrapper">
+                            <div class="custom-select" id="txCategoryDisplay">
+                                <span id="selectedCategoryText">Selecione uma categoria</span>
+                                <span class="arrow">↓</span>
+                            </div>
+                            <div class="custom-options" id="categoryOptions">
+                                <div class="option" data-val="💼 Receita">💼 Receita</div>
+                                <div class="option" data-val="🏠 Moradia">🏠 Moradia</div>
+                                <div class="option" data-val="🍔 Alimentação">🍔 Alimentação</div>
+                                <div class="option" data-val="🚗 Transporte">🚗 Transporte</div>
+                                <div class="option" data-val="🎬 Lazer">🎬 Lazer</div>
+                                <div class="option" data-val="💊 Saúde">💊 Saúde</div>
+                                <div class="option" data-val="📦 Outros">📦 Outros</div>
+                            </div>
+                            <input type="hidden" id="txCategory" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo</label>
+                        <div class="custom-select-wrapper" id="type-select-wrapper">
+                            <div class="custom-select" id="txTypeDisplay">
+                                <span id="selectedTypeText">Selecione o tipo</span>
+                                <span class="arrow">↓</span>
+                            </div>
+                            <div class="custom-options" id="typeOptions">
+                                <div class="option" data-val="income" data-label="Receita (+)">Receita (+)</div>
+                                <div class="option" data-val="expense" data-label="Despesa (-)">Despesa (-)</div>
+                            </div>
+                            <input type="hidden" id="txType" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-danger" id="deleteBtn" style="display:none">Excluir</button>
+                    <div style="flex:1"></div>
+                    <button type="button" class="btn-secondary" data-close="modalOverlay">Cancelar</button>
+                    <button type="submit" class="btn-primary" id="saveBtn">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: DELETE TRANSACTION CONFIRMATION -->
+    <div id="deleteTxModalOverlay" class="modal-overlay">
+        <div class="modal" style="max-width:350px; text-align: center;">
+            <div class="modal-header" style="justify-content:center">
+                <h2>Excluir Transação?</h2>
+            </div>
+            <p style="color: var(--muted); margin: 20px 0; font-size: 14px;">Você deseja remover esta transação permanentemente?</p>
+            <input type="hidden" id="deleteTxId">
+            <div class="modal-footer" style="justify-content: center; gap: 15px;">
+                <button type="button" class="btn-secondary" data-close="deleteTxModalOverlay">Cancelar</button>
+                <button type="button" class="btn-danger" id="confirm-delete-tx-btn">Sim, Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: GOAL CREATION -->
+    <div id="goalModalOverlay" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Nova Meta Financeira</h2>
+                <button class="modal-close" data-close="goalModalOverlay">×</button>
+            </div>
+            <form id="goalForm">
+                <div class="form-group">
+                    <label>Nome da Meta</label>
+                    <input type="text" id="goalName" placeholder="Ex: Férias 2026" required>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Valor Alvo (R$)</label>
+                        <input type="number" id="goalTarget" placeholder="10.000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Valor Atual (R$)</label>
+                        <input type="number" id="goalCurrent" placeholder="0" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" data-close="goalModalOverlay">Cancelar</button>
+                    <button type="submit" class="btn-primary">Criar Meta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: GOAL FUNDING -->
+    <div id="fundingModalOverlay" class="modal-overlay">
+        <div class="modal" style="max-width:350px">
+            <div class="modal-header">
+                <h2>Adicionar à Meta</h2>
+                <button class="modal-close" data-close="fundingModalOverlay">×</button>
+            </div>
+            <form id="fundingForm">
+                <input type="hidden" id="fundingGoalId">
+                <div class="form-group">
+                    <label>Quantia para guardar (R$)</label>
+                    <input type="number" id="fundingAmount" step="any" placeholder="Ex: 100,00" required autofocus>
+                </div>
+                <div class="modal-footer" style="margin-top:20px">
+                    <button type="button" class="btn-secondary" data-close="fundingModalOverlay">Cancelar</button>
+                    <button type="submit" class="btn-primary">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: DELETE GOAL CONFIRMATION -->
+    <div id="deleteGoalModalOverlay" class="modal-overlay">
+        <div class="modal" style="max-width:350px; text-align: center;">
+            <div class="modal-header" style="justify-content:center">
+                <h2>Apagar Meta?</h2>
+            </div>
+            <p style="color: var(--muted); margin: 20px 0; font-size: 14px;">Esta ação é permanente e não poderá ser desfeita.</p>
+            <input type="hidden" id="deleteGoalId">
+            <div class="modal-footer" style="justify-content: center; gap: 15px;">
+                <button type="button" class="btn-secondary" data-close="deleteGoalModalOverlay">Cancelar</button>
+                <button type="button" class="btn-danger" id="confirm-delete-goal-btn">Confirmar Exclusão</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
